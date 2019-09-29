@@ -1,7 +1,10 @@
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
 
 ;; Font
-(setq doom-font (font-spec :family "Iosevka" :size 14))
+(if (string= (system-name) "Laptop")
+  (setq doom-font (font-spec :family "Iosevka" :size 16))
+  (setq doom-font (font-spec :family "Iosevka" :size 14))
+)
 
 ;; Theme
 (setq doom-theme 'doom-dracula
