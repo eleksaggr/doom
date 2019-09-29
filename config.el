@@ -1,4 +1,8 @@
-;;; ~/.config/doom/config.el -*- lexical-binding: t; -*-
+;;; .doom.d/config.el -*- lexical-binding: t; -*-
 
-;; Place your private configuration here
-(setq doom-font (font-spec :family "Iosevka" :size 13))
+;; Font
+(setq doom-font (font-spec :family "Iosevka" :size 14))
+
+;; Theme
+(setq doom-theme 'doom-dracula
+      doom-themes-enable-italic nil)
