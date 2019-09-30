@@ -11,8 +11,7 @@
       doom-themes-enable-italic nil)
 
 ;; Pretty Code
-;; Disable pretty-code in Python mode
-(setq +pretty-code-enabled-modes '(not python-mode))
+(setq +pretty-code-enabled-modes '(haskell-mode))
 
 ;; Org-Mode
 (setq org-todo-keywords '(
