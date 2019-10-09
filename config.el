@@ -14,6 +14,13 @@
 (setq doom-theme 'doom-dracula
       doom-themes-enable-italic nil)
 
+;; Modeline
+(setq doom-modeline-buffer-file-name-style 'relative-from-project)
+(setq doom-modeline-major-mode-color-icon t)
+(setq doom-modeline-enable-word-count t)
+(setq doom-modeline-checker-simple-format nil)
+(setq doom-modeline-mu4e t)
+
 ;; Pretty Code
 (setq +pretty-code-enabled-modes '(haskell-mode))
 
@@ -39,12 +46,14 @@
           ))
   (setq org-agenda-start-on-weekday 1)
   (setq org-ellipsis " ▼ ")
-  (require 'org-mu4e)
+  ;; (require 'org-mu4e)
 )
+
 ;; Mail
-(setq +mu4e-backend 'offlineimap
-      mu4e-update-interval 120
-      )
+(setq +mu4e-backend 'offlineimap)
+(after! mu4e
+  (setq mu4e-update-interval 120)
+  )
 
 (set-email-account! "mixed-mode.de"
                     '((mu4e-sent-folder . "/Sent")
@@ -82,6 +91,18 @@ Das unerlaubte Kopieren sowie die unbefugte Weitergabe dieser Mail sind nicht ge
 Über das Internet versandte Emails können leicht unter fremden Namen erstellt oder manipuliert werden.
 Aus diesem Grunde bitten wir um Verständnis, dass wir zu Ihrem und unserem Schutz die rechtliche Verbindlichkeit der vorstehenden Erklärungen und Äußerungen ausschließen."))
                     t)
+;; Mu4e-Alert
+(mu4e-alert-set-default-style 'libnotify)
+(setq mu4e-alert-notify-repeated-mails 't)
+(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
 
-(after! mu4e-alert
-  'mu4e-alert-enable-notifications)
+;; ;; CalDav Sync
+;; (setq org-caldav-inbox "~/org/calendar.org")
+;; (setq org-caldav-uuid-extension ".EML")
+;; (setq org-caldav-sync-direction 'cal->org)
+;; (setq org-caldav-calendars
+;;       '((:calendar-id "Kalender"
+;;                      :url "http://localhost:1080/users/Alex.Egger@mixed-mode.de"
+;;                      :inbox "~/org/work-cal.org"
+;;         )))

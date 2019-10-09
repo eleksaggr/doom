@@ -183,6 +183,9 @@
  '(custom-safe-themes
    (quote
     ("f2b83b9388b1a57f6286153130ee704243870d40ae9ec931d0a1798a5a916e76" "f951343d4bbe5a90dba0f058de8317ca58a6822faa65d8463b0e751a07ec887c" default)))
+ '(org-agenda-files
+   (quote
+    ("~/org/work-cal.org" "/home/alex/org/inbox.org" "/home/alex/org/journal.org" "/home/alex/org/notes.org" "/home/alex/org/projects.org" "/home/alex/org/someday.org")))
  '(smtpmail-smtp-server "localhost")
  '(smtpmail-smtp-service 25))
 (custom-set-faces
