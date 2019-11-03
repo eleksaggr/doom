@@ -1,108 +1,68 @@
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
 
-;; User
-(setq user-mail-address "alex.egger@mixed-mode.de"
-      user-full-name "Alex Egger")
-
-;; Font
-(if (string= (system-name) "Laptop")
-  (setq doom-font (font-spec :family "Iosevka" :size 16))
-  (setq doom-font (font-spec :family "Iosevka" :size 14))
-)
-
-;; Theme
-(setq doom-theme 'doom-dracula
-      doom-themes-enable-italic nil)
-
-;; Modeline
-(setq doom-modeline-buffer-file-name-style 'relative-from-project)
-(setq doom-modeline-major-mode-color-icon t)
-(setq doom-modeline-enable-word-count t)
-(setq doom-modeline-checker-simple-format nil)
-(setq doom-modeline-mu4e t)
-
-;; Pretty Code
-(setq +pretty-code-enabled-modes '(haskell-mode))
-
-;; Org-Mode
-(after! org
-  (setq org-todo-keywords '(
-                            (sequence "TODO(t)" "|" "DONE(d)")
-                            (sequence "NEXT(n)" "WAIT(w)" "HOLD(h)" "|" "ABRT(c)")
-                            (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)")
-                            ))
-  (setq org-refile-targets '(("~/org/projects.org" :maxlevel . 1)
-                            ("~/org/someday.org" :maxlevel . 1)
-                            ))
-  (setq org-capture-templates
-        '(
-          ("t" "Todos")
-          ("tt" "Todo" entry (file "~/org/inbox.org") "* TODO %?\n")
-          ("tr" "Todo with Reference" entry (file "~/org/inbox.org") "* TODO %? %^G\n%a" :empty-lines 1)
-          ("te" "Todo from Email" entry (file "~/org/inbox.org") "* TODO %?\n%a" :empty-lines 1)
-          ("r" "Report")
-          ;; ("rw" "Weekly Report" entry (file (expand-file-name (format-time-string "weekly-%V.org") org-directory))
-          ;;  (file "~/org/weekly.tpl"))
-          ))
-  (setq org-agenda-start-on-weekday 1)
-  (setq org-ellipsis " ▼ ")
-  ;; (require 'org-mu4e)
-)
-
-;; Mail
-(setq +mu4e-backend 'offlineimap)
-(after! mu4e
-  (setq mu4e-update-interval 120)
+;;; General
+(setq user-full-name "Alex Egger")
+; When working on big projects this gets old quick, so disable file watchers.
+(setq lsp-enable-file-watchers nil)
+; Define a helper function to determine which PC we are running on.
+(defun my/is-work-host ()
+  "Returns whether Emacs is currently running on my PC at work, by comparing hostnames."
+  (let ((host (system-name)))
+    (and
+     (not (string= host "PC"))
+     (not (string= host "Laptop"))))
+  )
+; Set e-mail address based on which PC we are working on.
+(setq user-mail-address
+      (if (my/is-work-host)
+          "alex.egger@mixed-mode.de"
+        "alex.egger96@gmail.com"
+        ))
+(if (my/is-work-host)
+    (setq user-mail-address "alex.egger@mixed-mode.de")
+  (setq user-mail-address "alex.egger96@gmail.com")
   )
 
-(set-email-account! "mixed-mode.de"
-                    '((mu4e-sent-folder . "/Sent")
-                      (mu4e-drafts-folder . "/Drafts")
-                      (mu4e-trash-folder . "/Trash")
-                      (mu4e-refile-order . "/Archive")
-                      (smtpmail-smtp-server . "localhost")
-                      (smtpmail-smtp-service . 1025)
-                      (smtpmail-smtp-user . "aleegg")
-                      (smtpmail-stream-type . nil)
-                      (mu4e-compose-signature . "Mixed Mode GmbH
-Lochhamer Schlag 17
-D-82166 Gräfelfing/München
-Tel.	+49 / 89 / 89 86 8-200
-Fax	+49 / 89 / 89 86 8-222
-http://www.mixed-mode.de
+;;; UI
+(setq doom-font (font-spec :family "Iosevka" :size 14)
+      doom-theme 'doom-vibrant
+      ; Italics looks horrible in code.
+      doom-themes-enable-italic nil)
 
-Mixed Mode - Ihr Partner für Embedded & Software Engineering!
+;; C/C++
+; Define a style that conforms to the Linux kernel style.
+(defun kernel/setup-style ()
+  "Sets the required options for the Linux kernel style."
+  (setq c-basic-offset 8
+        indent-tabs-mode t
+        tab-width 8)
+  )
+(add-hook 'c-mode-common-hook 'kernel/setup-style)
 
--------
+; Taken from: https://github.com/coldnew/linux-kernel-coding-style.el/blob/master/linux-kernel-coding-style.el#L35
+(defun kernel/c-lineup-arglist-tabs-only ()
+  "Line up arguments by tabs, not spaces."
+  (let* ((anchor (c-langelem-pos c-syntactic-element))
+         (column (c-langelem-2nd-pos c-syntactic-element))
+         (offset (- (1+ column) anchor))
+         (steps (floor offset c-basic-offset)))
+    (* (max steps 1)
+       c-basic-offset)))
 
-Ein Unternehmen der PIXEL Group
+(c-add-style "kernel" '("linux" (c-offsets-alist
+                                 (arglist-cont-nonempty
+                                  c-lineup-gcc-asm-reg
+                                  kernel/c-lineup-arglist-tabs-only))
+                        ))
 
-Mixed Mode GmbH
-Sitz der Gesellschaft: Gräfelfing
-Amtsgericht: München
-HRB 130778
-Geschäftsführer: Helmut Süßmuth, Paul Privler
+; Set the default C style to be the kernel style.
+(setq c-default-style '((java-mode . "java")
+                       (awk-mode . "awk")
+                       (other . "kernel")))
 
--------
-
-Diese E-Mail enthält vertrauliche und/oder rechtlich geschützte Informationen.
-Wenn Sie nicht der richtige Adressat sind oder diese E-Mail irrtümlich erhalten haben, informieren Sie bitte sofort den Absender und vernichten Sie diese Mail.
-Das unerlaubte Kopieren sowie die unbefugte Weitergabe dieser Mail sind nicht gestattet.
-Über das Internet versandte Emails können leicht unter fremden Namen erstellt oder manipuliert werden.
-Aus diesem Grunde bitten wir um Verständnis, dass wir zu Ihrem und unserem Schutz die rechtliche Verbindlichkeit der vorstehenden Erklärungen und Äußerungen ausschließen."))
-                    t)
-;; Mu4e-Alert
-(mu4e-alert-set-default-style 'libnotify)
-(setq mu4e-alert-notify-repeated-mails 't)
-(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
-
-;; ;; CalDav Sync
-;; (setq org-caldav-inbox "~/org/calendar.org")
-;; (setq org-caldav-uuid-extension ".EML")
-;; (setq org-caldav-sync-direction 'cal->org)
-;; (setq org-caldav-calendars
-;;       '((:calendar-id "Kalender"
-;;                      :url "http://localhost:1080/users/Alex.Egger@mixed-mode.de"
-;;                      :inbox "~/org/work-cal.org"
-;;         )))
+;;; Org Mode
+(after! org
+  ; Enable Org Habits.
+  (add-to-list 'org-modules 'org-habit t)
+  ; Restore the C-c c keybind for org-capture.
+  (map! :nvi "C-c c" 'org-capture))
