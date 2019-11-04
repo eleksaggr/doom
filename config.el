@@ -95,18 +95,6 @@
   (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
   ; Enable soft-wrapping lines when viewing e-mail.
   (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
-  ; Change the headers mu4e will display.
-  (add-hook 'mu4e-headers-mode-hook
-            (defun my/mu4e-custom-headers ()
-              "Define the headers mu4e will show."
-              (interactive)
-              (setq mu4e-headers-fields
-                    `((:human-date . 25)
-                      (:flags . 6)
-                      (:from . 22)
-                      (:thread-subject . ,(- (window-body-width) 70))
-                      (:size . 7))))
-            )
   ; Set configuration for the work e-mail account.
   (set-email-account! "work"
                       '((smtpmail-smtp-server . "localhost")
