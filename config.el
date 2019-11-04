@@ -85,16 +85,12 @@
         mu4e-update-interval 120
         mu4e-attachment-dir "~/Downloads"
         mu4e-compose-dont-reply-to-self t
-        mu4e-confirm-quit nil
         mu4e-headers-auto-update t
         mu4e-headers-include-related t
         mu4e-headers-skip-duplicates t
         mu4e-sent-messages-behavior 'delete
-        mu4e-view-show-images t
         )
   (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
-  ; Enable soft-wrapping lines when viewing e-mail.
-  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
   ; Set configuration for the work e-mail account.
   (set-email-account! "work"
                       '((smtpmail-smtp-server . "localhost")
