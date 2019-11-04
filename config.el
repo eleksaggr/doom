@@ -66,3 +66,67 @@
   (add-to-list 'org-modules 'org-habit t)
   ; Restore the C-c c keybind for org-capture.
   (map! :nvi "C-c c" 'org-capture))
+
+;;; Mail
+(defun my/work-mail-setup ()
+  "Sets all settings related to my work's e-mail."
+  (setq +mu4e-backend 'offlineimap
+        mu4e-update-interval 120
+        mu4e-attachment-dir "~/Downloads"
+        mu4e-compose-dont-reply-to-self t
+        mu4e-confirm-quit nil
+        mu4e-headers-auto-update t
+        mu4e-headers-include-related t
+        mu4e-headers-skip-duplicates t
+        mu4e-sent-messages-behavior 'delete
+        mu4e-view-show-images t
+        )
+  (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
+  ; Enable soft-wrapping lines when viewing e-mail.
+  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+  ; Change the headers mu4e will display.
+  (add-hook 'mu4e-headers-mode-hook
+            (defun my/mu4e-custom-headers ()
+              "Define the headers mu4e will show."
+              (interactive)
+              (setq mu4e-headers-fields
+                    `((:human-date . 25)
+                      (:flags . 6)
+                      (:from . 22)
+                      (:thread-subject . ,(- (window-body-width) 70))
+                      (:size . 7))))
+            )
+  ; Set configuration for the work e-mail account.
+  (set-email-account! "work"
+                      '((smtpmail-smtp-server . "localhost")
+                        (smtpmail-smtp-service . 1025)
+                        (smtpmail-smtp-user . "aleegg")
+                        (smtpmail-stream-type . nil)
+                        (mu4e-drafts-folder . "/Drafts")
+                        (mu4e-refile-folder . "/Archive")
+                        (mu4e-sent-folder . "/Sent")
+                        (mu4e-trash-folder . "/Trash")
+                        (mu4e-compose-signature . t)
+                        (message-signature-file . "~/.doom.d/signature.tpl")))
+  ; Enable e-mail alerts.
+  (setq mu4e-alert-notify-repeated-mails t)
+
+  (mu4e-alert-set-default-style 'libnotify)
+  (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+  (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+  )
+
+(if (my/is-work-host)
+    (my/work-mail-setup))
+
+;;; Utility
+
+(defun fetch-cobie-menu ()
+  "Fetches Cobie's menu for today."
+  (interactive)
+  (with-output-to-temp-buffer "*cobie-menu*"
+    (shell-command "lunchlens-exe" "*cobie-menu*")
+    (pop-to-buffer "*cobie-menu*")
+    (fit-window-to-buffer)
+    )
+  )
