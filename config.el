@@ -71,6 +71,9 @@
   ; Disable flycheck for Org mode.
   (setq flycheck-global-modes '(not org-mode))
 
+  ; Todo keywords
+  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "ABRT(a)")))
+
   ; Org Capture Templates
   (defvar org-inbox-file "~/org/inbox.org" "The file the GTD inbox is stored in.")
   (setq org-capture-templates '(
