@@ -66,6 +66,14 @@
   (add-to-list 'org-modules 'org-habit t)
   ; Disable flycheck for Org mode.
   (setq flycheck-global-modes '(not org-mode))
+
+  ; Org Capture Templates
+  (defvar org-inbox-file "~/org/inbox.org" "The file the GTD inbox is stored in.")
+  (setq org-capture-templates '(
+                                ("t" "Todo" entry (file org-inbox-file) "* TODO %?\n" :empty-lines 1)
+                                ("l" "Todo with Backlink" entry (file org-inbox-file) "* TODO %?\n%a" :empty-lines 1)
+                                ))
+
   ; Restore the C-c c keybind for org-capture.
   (map! :nvi "C-c c" 'org-capture)
   )
