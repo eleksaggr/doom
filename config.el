@@ -90,7 +90,6 @@
         mu4e-headers-skip-duplicates t
         mu4e-sent-messages-behavior 'delete
         )
-  (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
   ; Set configuration for the work e-mail account.
   (set-email-account! "work"
                       '((smtpmail-smtp-server . "localhost")
