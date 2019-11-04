@@ -90,6 +90,12 @@
         mu4e-headers-skip-duplicates t
         mu4e-sent-messages-behavior 'delete
         )
+
+  ; Set the update interval.
+  (after! mu4e
+    (setq mu4e-update-interval 120)
+    )
+
   ; Set configuration for the work e-mail account.
   (set-email-account! "work"
                       '((smtpmail-smtp-server . "localhost")
@@ -110,8 +116,7 @@
   (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
   )
 
-(if (my/is-work-host)
-    (my/work-mail-setup))
+(if (my/is-work-host) (my/work-mail-setup))
 
 ;;; Utility
 
