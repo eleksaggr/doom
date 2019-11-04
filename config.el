@@ -64,8 +64,11 @@
 (after! org
   ; Enable Org Habits.
   (add-to-list 'org-modules 'org-habit t)
+  ; Disable flycheck for Org mode.
+  (setq flycheck-global-modes '(not org-mode))
   ; Restore the C-c c keybind for org-capture.
-  (map! :nvi "C-c c" 'org-capture))
+  (map! :nvi "C-c c" 'org-capture)
+  )
 
 ;;; Mail
 (defun my/work-mail-setup ()
