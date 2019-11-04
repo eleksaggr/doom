@@ -2,8 +2,7 @@
 
 ;;; General
 (setq user-full-name "Alex Egger")
-; When working on big projects this gets old quick, so disable file watchers.
-(setq lsp-enable-file-watchers nil)
+
 ; Define a helper function to determine which PC we are running on.
 (defun my/is-work-host ()
   "Returns whether Emacs is currently running on my PC at work, by comparing hostnames."
@@ -12,6 +11,7 @@
      (not (string= host "PC"))
      (not (string= host "Laptop"))))
   )
+
 ; Set e-mail address based on which PC we are working on.
 (setq user-mail-address
       (if (my/is-work-host)
@@ -28,6 +28,10 @@
       doom-theme 'doom-vibrant
       ; Italics looks horrible in code.
       doom-themes-enable-italic nil)
+
+;;; LSP
+; When working on big projects this gets old quick, so disable file watchers.
+(setq lsp-enable-file-watchers nil)
 
 ;; C/C++
 ; Define a style that conforms to the Linux kernel style.
