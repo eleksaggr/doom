@@ -115,6 +115,21 @@
                         (mu4e-trash-folder . "/Trash")
                         (mu4e-compose-signature . t)
                         (message-signature-file . "~/.doom.d/signature.tpl")))
+
+  ; Set custom bookmarks.
+  (add-to-list 'mu4e-bookmarks
+               (make-mu4e-bookmark
+                :name "Flagged Messages"
+                :query "flag:flagged"
+                :key ?f)
+               t)
+  (add-to-list 'mu4e-bookmarks
+               (make-mu4e-bookmark
+                :name "IPEK"
+                :query "from:Guggemos OR from:Endler OR from:Biskop OR ipek"
+                :key ?i)
+               t)
+
   ; Enable e-mail alerts.
   (setq mu4e-alert-email-notification-types '(subject))
   (setq mu4e-alert-notify-repeated-mails t)
