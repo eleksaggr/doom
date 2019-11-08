@@ -88,7 +88,7 @@
 ;;; Mail
 (defun my/work-mail-setup ()
   "Sets all settings related to my work's e-mail."
-  (setq +mu4e-backend 'offlineimap
+  (setq +mu4e-backend 'mbsync
         mu4e-update-interval 120
         mu4e-attachment-dir "~/Downloads"
         mu4e-compose-dont-reply-to-self t
@@ -116,6 +116,7 @@
                         (mu4e-compose-signature . t)
                         (message-signature-file . "~/.doom.d/signature.tpl")))
   ; Enable e-mail alerts.
+  (setq mu4e-alert-email-notification-types '(subject))
   (setq mu4e-alert-notify-repeated-mails t)
 
   (mu4e-alert-set-default-style 'libnotify)
