@@ -21,10 +21,6 @@
           "alex.egger@mixed-mode.de"
         "alex.egger96@gmail.com"
         ))
-(if (my/is-work-host)
-    (setq user-mail-address "alex.egger@mixed-mode.de")
-  (setq user-mail-address "alex.egger96@gmail.com")
-  )
 
 ;;; UI
 (setq doom-font (font-spec :family "Iosevka" :size 14)
