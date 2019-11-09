@@ -3,6 +3,9 @@
 ;;; General
 (setq user-full-name "Alex Egger")
 
+; Disable flycheck for Org mode.
+(setq flycheck-global-modes '(not org-mode))
+
 ; Define a helper function to determine which PC we are running on.
 (defun my/is-work-host ()
   "Returns whether Emacs is currently running on my PC at work, by comparing hostnames."
@@ -65,21 +68,44 @@
                        (other . "kernel")))
 
 ;;; Org Mode
-(after! org
-  ; Enable Org Habits.
-  (add-to-list 'org-modules 'org-habit t)
-  ; Disable flycheck for Org mode.
-  (setq flycheck-global-modes '(not org-mode))
 
-  ; Todo keywords
-  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "ABRT(a)")))
+(defun my/org-setup-keywords ()
+  "Set up custom org mode keywords and faces."
+  (custom-declare-face '+org-todo-hold '((t (:inherit (bold warning org-todo)))) "")
+  (custom-declare-face '+org-todo-abort '((t (:inherit (bold error org-todo)))) "")
 
-  ; Org Capture Templates
-  (defvar org-inbox-file "~/org/inbox.org" "The file the GTD inbox is stored in.")
+  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "ABRT(a)"))
+        org-todo-keyword-faces '(("ABRT" . +org-todo-abort)
+                                 ("WAIT" . +org-todo-hold)))
+  )
+
+(defvar org-inbox-file "~/org/inbox.org" "The org file the GTD inbox is stored in.")
+(defvar org-project-file "~/org/projects.org" "The org file GTD projects are stored in.")
+(defvar org-habits-file "~/org/habits.org" "The org file habits are stored in.")
+
+(defun my/org-setup-capture-templates ()
+  "Set up custom capture templates."
   (setq org-capture-templates '(
                                 ("t" "Todo" entry (file org-inbox-file) "* TODO %?\n" :empty-lines 1)
                                 ("l" "Todo with Backlink" entry (file org-inbox-file) "* TODO %?\n%a" :empty-lines 1)
                                 ))
+  )
+
+(defun my/org-setup-agenda ()
+  "Set up org agenda."
+  (setq org-agenda-window-setup 'other-window
+        org-agenda-span 7
+        org-agenda-start nil
+        org-agenda-start-on-weekday 1)
+  )
+
+(after! org
+  ; Enable Org Habits.
+  (add-to-list 'org-modules 'org-habit t)
+
+  (my/org-setup-keywords)
+  (my/org-setup-capture-templates)
+  (my/org-setup-agenda)
 
   ; Restore the C-c c keybind for org-capture.
   (map! :nvi "C-c c" 'org-capture)
@@ -89,19 +115,12 @@
 (defun my/work-mail-setup ()
   "Sets all settings related to my work's e-mail."
   (setq +mu4e-backend 'mbsync
-        mu4e-update-interval 120
-        mu4e-attachment-dir "~/Downloads"
         mu4e-compose-dont-reply-to-self t
         mu4e-headers-auto-update t
         mu4e-headers-include-related t
         mu4e-headers-skip-duplicates t
         mu4e-sent-messages-behavior 'delete
         )
-
-  ; Set the update interval.
-  (after! mu4e
-    (setq mu4e-update-interval 120)
-    )
 
   ; Set configuration for the work e-mail account.
   (set-email-account! "work"
@@ -129,6 +148,11 @@
                 :query "from:Guggemos OR from:Endler OR from:Biskop OR ipek"
                 :key ?i)
                t)
+
+  ; Set the update interval.
+  (after! mu4e
+    (setq mu4e-update-interval 120)
+    )
 
   ; Enable e-mail alerts.
   (setq mu4e-alert-email-notification-types '(subject))
