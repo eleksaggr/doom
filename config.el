@@ -98,10 +98,15 @@
 (after! org
   ; Enable Org Habits.
   (add-to-list 'org-modules 'org-habit t)
+  ; Enable Org Checklists.
+  (add-to-list 'org-modules 'org-checklist t)
 
   (my/org-setup-keywords)
   (my/org-setup-capture-templates)
   (my/org-setup-agenda)
+
+  ; Show done habits in today's agenda.
+  (setq org-agenda-show-all-today t)
 
   ; Exclude the project tag from inheritance.
   (setq org-tags-exclude-from-inheritance '("project"))
