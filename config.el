@@ -108,6 +108,10 @@
 
   ; Restore the C-c c keybind for org-capture.
   (map! :nvi "C-c c" 'org-capture)
+  ; Define shortcut to jump to org-inbox-file directly.
+  (map! :nvi "C-c i" (lambda () (interactive) (find-file org-inbox-file)))
+  ; Define shortcut to jump to org-projects-file directly.
+  (map! :nvi "C-c o" (lambda () (interactive) (find-file org-projects-file)))
   )
 
 ;;; Mail
