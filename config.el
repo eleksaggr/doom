@@ -76,7 +76,7 @@
   )
 
 (defvar org-inbox-file "~/org/inbox.org" "The org file the GTD inbox is stored in.")
-(defvar org-project-file "~/org/projects.org" "The org file GTD projects are stored in.")
+(defvar org-projects-file "~/org/projects.org" "The org file GTD projects are stored in.")
 (defvar org-habits-file "~/org/habits.org" "The org file habits are stored in.")
 
 (defun my/org-setup-capture-templates ()
