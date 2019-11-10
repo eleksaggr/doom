@@ -103,6 +103,9 @@
   (my/org-setup-capture-templates)
   (my/org-setup-agenda)
 
+  ; Exclude the project tag from inheritance.
+  (setq org-tags-exclude-from-inheritance '("project"))
+
   ; Restore the C-c c keybind for org-capture.
   (map! :nvi "C-c c" 'org-capture)
   )
