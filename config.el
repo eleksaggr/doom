@@ -143,23 +143,24 @@
                         (mu4e-compose-signature . t)
                         (message-signature-file . "~/.doom.d/signature.tpl")))
 
-  ; Set custom bookmarks.
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "Flagged Messages"
-                :query "flag:flagged"
-                :key ?f)
-               t)
-  (add-to-list 'mu4e-bookmarks
-               (make-mu4e-bookmark
-                :name "IPEK"
-                :query "from:Guggemos OR from:Endler OR from:Biskop OR ipek"
-                :key ?i)
-               t)
 
   ; Set the update interval.
   (after! mu4e
     (setq mu4e-update-interval 120)
+
+    ; Set custom bookmarks.
+    (add-to-list 'mu4e-bookmarks
+                (make-mu4e-bookmark
+                  :name "Flagged Messages"
+                  :query "flag:flagged"
+                  :key ?f)
+                t)
+    (add-to-list 'mu4e-bookmarks
+                (make-mu4e-bookmark
+                  :name "IPEK"
+                  :query "from:Guggemos OR from:Endler OR from:Biskop OR ipek"
+                  :key ?i)
+                t)
     )
 
   ; Enable e-mail alerts.
