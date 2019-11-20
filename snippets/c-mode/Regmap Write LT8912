@@ -1,0 +1,4 @@
+# key: rwlt
+# name: Regmap Write LT8912
+# --
+regmap_write(lt->regmap[${1:0}], ${2:0x00}, ${0:0x00});

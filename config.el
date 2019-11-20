@@ -24,6 +24,7 @@
 
 ;;; UI
 (setq doom-font (font-spec :family "Iosevka" :size 14)
+      doom-modeline-mu4e t
       doom-theme 'doom-vibrant
       ; Italics looks horrible in code.
       doom-themes-enable-italic nil)
@@ -63,6 +64,8 @@
                        (awk-mode . "awk")
                        (other . "kernel")))
 
+(setq ccls-initialization-options '(:index (:initialBlacklist ,"[\".\"]")))
+
 ;;; Org Mode
 
 (defun my/org-setup-keywords ()
@@ -91,7 +94,7 @@
   "Set up org agenda."
   (setq org-agenda-window-setup 'other-window
         org-agenda-span 7
-        org-agenda-start nil
+        org-agenda-start-day nil
         org-agenda-start-on-weekday 1)
   )
 
@@ -120,15 +123,16 @@
   )
 
 ;;; Mail
+; Enable e-mail alerts.
+
+(mu4e-alert-set-default-style 'libnotify)
+(setq mu4e-alert-email-notification-types '(subject))
+(setq mu4e-alert-notify-repeated-mails t)
+(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+
 (defun my/work-mail-setup ()
   "Sets all settings related to my work's e-mail."
-  (setq +mu4e-backend 'mbsync
-        mu4e-compose-dont-reply-to-self t
-        mu4e-headers-auto-update t
-        mu4e-headers-include-related t
-        mu4e-headers-skip-duplicates t
-        mu4e-sent-messages-behavior 'delete
-        )
 
   ; Set configuration for the work e-mail account.
   (set-email-account! "work"
@@ -143,36 +147,30 @@
                         (mu4e-compose-signature . t)
                         (message-signature-file . "~/.doom.d/signature.tpl")))
 
-
-  ; Set the update interval.
-  (after! mu4e
-    (setq mu4e-update-interval 120)
-
-    ; Set custom bookmarks.
-    (add-to-list 'mu4e-bookmarks
-                (make-mu4e-bookmark
-                  :name "Flagged Messages"
-                  :query "flag:flagged"
-                  :key ?f)
-                t)
-    (add-to-list 'mu4e-bookmarks
-                (make-mu4e-bookmark
-                  :name "IPEK"
-                  :query "from:Guggemos OR from:Endler OR from:Biskop OR ipek"
-                  :key ?i)
-                t)
-    )
-
-  ; Enable e-mail alerts.
-  (setq mu4e-alert-email-notification-types '(subject))
-  (setq mu4e-alert-notify-repeated-mails t)
-
-  (mu4e-alert-set-default-style 'libnotify)
-  (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-  (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
   )
 
-(if (my/is-work-host) (my/work-mail-setup))
+(after! mu4e
+  (setq +mu4e-backend 'mbsync
+        mu4e-update-interval 120
+        mu4e-compose-dont-reply-to-self t
+        mu4e-headers-auto-update t
+        mu4e-headers-include-related t
+        mu4e-headers-skip-duplicates t
+        mu4e-sent-messages-behavior 'delete
+        mu4e-change-filenames-when-moving t
+        )
+
+  ; Set custom bookmarks.
+  (add-to-list 'mu4e-bookmarks
+              (make-mu4e-bookmark
+                :name "Flagged Messages"
+                :query "flag:flagged"
+                :key ?f)
+              t)
+
+  )
+
+(when (my/is-work-host) (my/work-mail-setup))
 
 ;;; Utility
 
