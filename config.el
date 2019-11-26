@@ -175,7 +175,7 @@
 ;;; Utility
 
 (defun fetch-cobie-menu ()
-  "Fetches Cobie's menu for today."
+  "Fetch Cobie's menu for today."
   (interactive)
   (with-output-to-temp-buffer "*cobie-menu*"
     (shell-command "lunchlens-exe" "*cobie-menu*")
