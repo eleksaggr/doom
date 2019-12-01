@@ -1,19 +1,12 @@
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
 
+(load-file ".doom.d/utility.el")
+
 ;;; General
 (setq user-full-name "Alex Egger")
 
 ; Disable flycheck for Org mode.
 (setq flycheck-global-modes '(not org-mode))
-
-; Define a helper function to determine which PC we are running on.
-(defun my/is-work-host ()
-  "Returns whether Emacs is currently running on my PC at work, by comparing hostnames."
-  (let ((host (system-name)))
-    (and
-     (not (string= host "PC"))
-     (not (string= host "Laptop"))))
-  )
 
 ; Set e-mail address based on which PC we are working on.
 (setq user-mail-address
@@ -24,58 +17,35 @@
 
 ;;; UI
 (setq doom-font (font-spec :family "Iosevka" :size 14)
-      doom-modeline-mu4e t
-      doom-theme 'doom-vibrant
+      doom-theme 'doom-laserwave
       ; Italics looks horrible in code.
-      doom-themes-enable-italic nil)
+      doom-themes-enable-italic nil
+      doom-modeline-mu4e t)
 
 ;;; LSP
 ; When working on big projects this gets old quick, so disable file watchers.
 (setq lsp-enable-file-watchers nil)
 
 ;; C/C++
-; Define a style that conforms to the Linux kernel style.
-(defun kernel/setup-style ()
-  "Sets the required options for the Linux kernel style."
-  (setq c-basic-offset 8
-        indent-tabs-mode t
-        tab-width 8)
-  )
-(add-hook 'c-mode-common-hook 'kernel/setup-style)
-
-; Taken from: https://github.com/coldnew/linux-kernel-coding-style.el/blob/master/linux-kernel-coding-style.el#L35
-(defun kernel/c-lineup-arglist-tabs-only ()
-  "Line up arguments by tabs, not spaces."
-  (let* ((anchor (c-langelem-pos c-syntactic-element))
-         (column (c-langelem-2nd-pos c-syntactic-element))
-         (offset (- (1+ column) anchor))
-         (steps (floor offset c-basic-offset)))
-    (* (max steps 1)
-       c-basic-offset)))
-
-(c-add-style "kernel" '("linux" (c-offsets-alist
-                                 (arglist-cont-nonempty
-                                  c-lineup-gcc-asm-reg
-                                  kernel/c-lineup-arglist-tabs-only))
-                        ))
-
 ; Set the default C style to be the kernel style.
 (setq c-default-style '((java-mode . "java")
                        (awk-mode . "awk")
                        (other . "kernel")))
 
+; Stop CCLS from indexing the whole project.
+; This is really slow when working on the kernel.
 (setq ccls-initialization-options '(:index (:initialBlacklist ,"[\".\"]")))
 
 ;;; Org Mode
-
 (defun my/org-setup-keywords ()
   "Set up custom org mode keywords and faces."
-  (custom-declare-face '+org-todo-hold '((t (:inherit (bold warning org-todo)))) "")
+  (custom-declare-face '+org-todo-wait '((t (:inherit (bold warning org-todo)))) "")
   (custom-declare-face '+org-todo-abort '((t (:inherit (bold error org-todo)))) "")
+  (custom-declare-face '+org-todo-next '((t (:inherit (bold )))))
 
   (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "ABRT(a)"))
         org-todo-keyword-faces '(("ABRT" . +org-todo-abort)
-                                 ("WAIT" . +org-todo-hold)))
+                                 ("WAIT" . +org-todo-wait)))
   )
 
 (defvar org-inbox-file "~/org/inbox.org" "The org file the GTD inbox is stored in.")
@@ -99,9 +69,8 @@
   )
 
 (after! org
-  ; Enable Org Habits.
+  ; Enable Org modules.
   (add-to-list 'org-modules 'org-habit t)
-  ; Enable Org Checklists.
   (add-to-list 'org-modules 'org-checklist t)
 
   (my/org-setup-keywords)
@@ -171,15 +140,3 @@
   )
 
 (when (my/is-work-host) (my/work-mail-setup))
-
-;;; Utility
-
-(defun fetch-cobie-menu ()
-  "Fetch Cobie's menu for today."
-  (interactive)
-  (with-output-to-temp-buffer "*cobie-menu*"
-    (shell-command "lunchlens-exe" "*cobie-menu*")
-    (pop-to-buffer "*cobie-menu*")
-    (fit-window-to-buffer)
-    )
-  )
