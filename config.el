@@ -44,7 +44,7 @@
   "Set up custom org mode keywords and faces."
   (custom-declare-face '+org-todo-wait '((t (:inherit (bold warning org-todo)))) "")
   (custom-declare-face '+org-todo-abort '((t (:inherit (bold error org-todo)))) "")
-  (custom-declare-face '+org-todo-next '((t (:inherit (bold magit-branch-remote-head org-todo)))) "")
+  (custom-declare-face '+org-todo-next '((t (:inherit (bold org-todo) :box 1))) "")
 
   (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "ABRT(a)"))
         org-todo-keyword-faces '(("ABRT" . +org-todo-abort)
