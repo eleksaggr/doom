@@ -59,7 +59,7 @@
 (defun my/org-setup-capture-templates ()
   "Set up custom capture templates."
   (setq org-capture-templates '(
-                                ("t" "Todo" entry (file org-inbox-file) "* TODO %?\n" :empty-lines 1)
+                                ("t" "Todo" entry (file org-inbox-file) "* TODO %?\n")
                                 ("l" "Todo with Backlink" entry (file org-inbox-file) "* TODO %?\n%a" :empty-lines 1)
                                 ))
   )
