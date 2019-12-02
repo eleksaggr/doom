@@ -2,6 +2,9 @@
 
 (load-file ".doom.d/utility.el")
 
+(defun battery-update ()
+  (ignore))
+
 ;;; General
 (setq user-full-name "Alex Egger")
 
