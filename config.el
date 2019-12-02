@@ -41,11 +41,12 @@
   "Set up custom org mode keywords and faces."
   (custom-declare-face '+org-todo-wait '((t (:inherit (bold warning org-todo)))) "")
   (custom-declare-face '+org-todo-abort '((t (:inherit (bold error org-todo)))) "")
-  (custom-declare-face '+org-todo-next '((t (:inherit (bold )))))
+  (custom-declare-face '+org-todo-next '((t (:inherit (bold magit-branch-remote-head org-todo)))) "")
 
   (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "ABRT(a)"))
         org-todo-keyword-faces '(("ABRT" . +org-todo-abort)
-                                 ("WAIT" . +org-todo-wait)))
+                                 ("WAIT" . +org-todo-wait)
+                                 ("NEXT" . +org-todo-next)))
   )
 
 (defvar org-inbox-file "~/org/inbox.org" "The org file the GTD inbox is stored in.")
@@ -65,6 +66,7 @@
   (setq org-agenda-window-setup 'other-window
         org-agenda-span 7
         org-agenda-start-day nil
+        org-agenda-show-all-today t
         org-agenda-start-on-weekday 1)
   )
 
@@ -77,8 +79,8 @@
   (my/org-setup-capture-templates)
   (my/org-setup-agenda)
 
-  ; Show done habits in today's agenda.
-  (setq org-agenda-show-all-today t)
+  ; Restore default org tags column.
+  (setq org-tags-column -77)
 
   ; Exclude the project tag from inheritance.
   (setq org-tags-exclude-from-inheritance '("project"))
