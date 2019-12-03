@@ -70,7 +70,71 @@
         org-agenda-span 7
         org-agenda-start-day nil
         org-agenda-show-all-today t
-        org-agenda-start-on-weekday 1)
+        org-agenda-start-on-weekday 1
+        org-agenda-dim-blocked-tasks nil
+        org-agenda-compact-blocks nil
+        org-stuck-projects '("" nil nil "")
+        )
+
+  (setq org-agenda-custom-commands
+        '(
+          ("b" "Block View"
+           ((agenda "" ((org-agenda-span 1)))
+            (tags-todo "/!+NEXT"
+                       ((org-agenda-overriding-header "Next Tasks")
+                        (org-tags-match-list-sublevels t)
+                        (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep))))
+            ;; (tags-todo "/!"
+            ;;            ((org-agenda-overriding-header "Projects")
+            ;;             (org-agenda-skip-function 'my/skip-non-projects)
+            ;;             (org-tags-match-list-sublevels t)
+            ;;             (org-agenda-sorting-strategy '(category-keep))))
+            ;; (tags-todo "/!"
+            ;;            ((org-agenda-overriding-header "Stuck Projects")
+            ;;             (org-agenda-skip-function 'my/skip-non-stuck-projects)
+            ;;             (org-tags-match-list-sublevels t)
+            ;;             (org-agenda-sorting-strategy '(category-keep))))
+            (tags-todo "-refile-STYLE=\"habit\"/!-WAIT-NEXT-ABRT"
+                       ((org-agenda-overriding-header "Tasks")
+                        (org-agenda-skip-function 'my/skip-non-tasks)
+                        (org-agenda-todo-ignore-with-date t)
+                        (org-agenda-tags-todo-honor-ignore-options t)
+                        (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep))))
+            (tags-todo "/!+WAIT"
+                       ((org-agenda-overriding-header "Tasks on Hold")
+                        (org-agenda-todo-ignore-with-date t)
+                        (org-agenda-tags-todo-honor-ignore-options t)
+                        (org-agenda-sorting-strategy '(category-keep))))
+            (tags "refile"
+                  ((org-agenda-overriding-header "Tasks to Refile")
+                   (org-tags-match-list-sublevels nil)))
+            (tags "-ARCHIVE/DONE|ABRT"
+                  ((org-agenda-overriding-header "Tasks to Archive")
+                   (org-agenda-skip-function 'my/skip-non-tasks)
+                   (org-agenda-sorting-strategy '(category-keep))))
+            )
+           )
+          ("w" "Weekly Review"
+           ((agenda "" (
+                        (org-agenda-span 7)
+                        (org-habit-show-habits nil)
+                        ))
+            (tags "refile"
+                  ((org-agenda-overriding-header "Tasks to Refile")
+                   (org-tags-match-list-sublevels nil)))
+            (tags-todo "/!"
+                       ((org-agenda-overriding-header "Stuck Projects")
+                        (org-agenda-skip-function 'my/skip-non-stuck-projects)
+                        (org-agenda-sorting-strategy '(category-keep))
+                        (org-tags-match-list-sublevels t)
+                        ))
+            (tags "someday"
+                  ((org-agenda-overriding-header "Unscheduled Tasks")
+                   (org-tags-match-list-sublevels nil)))
+            )
+           )
+          )
+        )
   )
 
 (after! org
