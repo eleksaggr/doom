@@ -152,6 +152,9 @@
   ; Exclude the project tag from inheritance.
   (setq org-tags-exclude-from-inheritance '("project"))
 
+  ; Switch to evil insert mode when adding note.
+  (add-hook 'org-log-buffer-setup-hook #'evil-insert-state)
+
   ; Restore the C-c c keybind for org-capture.
   (map! :nvi "C-c c" 'org-capture)
   ; Define shortcut to jump to org-inbox-file directly.
