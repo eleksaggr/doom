@@ -96,7 +96,7 @@
             ;;             (org-agenda-sorting-strategy '(category-keep))))
             (tags-todo "-refile-STYLE=\"habit\"/!-WAIT-NEXT-ABRT"
                        ((org-agenda-overriding-header "Tasks")
-                        (org-agenda-skip-function 'my/skip-non-tasks)
+                        ;; (org-agenda-skip-function 'my/skip-non-tasks)
                         (org-agenda-todo-ignore-with-date t)
                         (org-agenda-tags-todo-honor-ignore-options t)
                         (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep))))
@@ -151,6 +151,9 @@
 
   ; Exclude the project tag from inheritance.
   (setq org-tags-exclude-from-inheritance '("project"))
+
+  ; Add hook to update projects if they are marked NEXT.
+  (add-hook 'org-after-todo-state-change-hook #'my/raise-parent-task-if-next)
 
   ; Switch to evil insert mode when adding note.
   (add-hook 'org-log-buffer-setup-hook #'evil-insert-state)

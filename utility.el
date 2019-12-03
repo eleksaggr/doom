@@ -125,6 +125,15 @@
        ((not (or (my/is-project-p) (my/is-project-subtree-p))) nil)
        (t next)))))
 
+(defun my/raise-parent-task-if-next ()
+  "Mark a parent task as TODO if it is marked NEXT."
+  (let ((task-state (nth 2 (org-heading-components))))
+    (when task-state
+      (save-excursion
+        (while (org-up-heading-safe)
+          (when (member (nth 2 (org-heading-components)) (list "NEXT"))
+            (org-todo "TODO")))))))
+
 ;;; Various
 (defun my/fetch-cobie-menu ()
   "Fetch Cobie's menu for today."
