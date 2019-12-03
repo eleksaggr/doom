@@ -161,6 +161,8 @@
   (map! :nvi "C-c i" (lambda () (interactive) (find-file org-inbox-file)))
   ; Define shortcut to jump to org-projects-file directly.
   (map! :nvi "C-c o" (lambda () (interactive) (find-file org-projects-file)))
+  ; Define a handy org-agenda shortcut.
+  (map! :nvi "C-c a" 'org-agenda)
   )
 
 ;;; Mail
