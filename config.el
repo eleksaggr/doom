@@ -58,9 +58,11 @@
 
 (defun my/org-setup-capture-templates ()
   "Set up custom capture templates."
+  (require 'org-mu4e)
   (setq org-capture-templates '(
                                 ("t" "Todo" entry (file org-inbox-file) "* TODO %?\n")
                                 ("l" "Todo with Backlink" entry (file org-inbox-file) "* TODO %?\n%a" :empty-lines 1)
+                                ("r" "Respond to Email" entry (file org-inbox-file) "* TODO Respond to %:fromname on %:subject\n%a\nReceived on: %U" :empty-lines 1 :immediate-finish t)
                                 ))
   )
 
