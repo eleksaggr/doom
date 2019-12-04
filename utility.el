@@ -135,6 +135,20 @@
             (org-todo "TODO")))))))
 
 ;;; Various
+(defvar my/org-backup-dir "/media/ext/backups" "Directory org files backups are stored in.")
+
+(defun my/org-backup ()
+  "Backs up org files to an appropriate directory."
+  (interactive)
+  (let* ((src-dir (replace-regexp-in-string "\n$" "" (shell-command-to-string (concat "readlink -f " org-directory))))
+         (cmd (concat "rsync -Caub" " " src-dir " " my/org-backup-dir))
+         (display-buffer-alist
+          (cons (cons "\\*Async Shell Command\\*.*"
+                      (cons #'display-buffer-no-window nil))
+                display-buffer-alist)))
+    (async-shell-command cmd))
+  )
+
 (defun my/fetch-cobie-menu ()
   "Fetch Cobie's menu for today."
   (interactive)

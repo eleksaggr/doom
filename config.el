@@ -160,6 +160,10 @@
   ; Switch to evil insert mode when adding note.
   (add-hook 'org-log-buffer-setup-hook #'evil-insert-state)
 
+  ; Backup Org files to external HDD.
+  (when (my/is-work-host)
+    (run-with-timer nil (* 15 60) 'my/org-backup))
+
   ; Restore the C-c c keybind for org-capture.
   (map! :nvi "C-c c" 'org-capture)
   ; Define shortcut to jump to org-inbox-file directly.
@@ -172,7 +176,6 @@
 
 ;;; Mail
 ; Enable e-mail alerts.
-
 (mu4e-alert-set-default-style 'libnotify)
 (setq mu4e-alert-email-notification-types '(subject))
 (setq mu4e-alert-notify-repeated-mails t)
