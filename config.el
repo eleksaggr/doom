@@ -62,8 +62,9 @@
   (setq org-capture-templates '(
                                 ("t" "Todo" entry (file org-inbox-file) "* TODO %?\n")
                                 ("l" "Todo with Backlink" entry (file org-inbox-file) "* TODO %?\n%a" :empty-lines 1)
-                                ("r" "Respond to Email" entry (file org-inbox-file) "* TODO Respond to %:fromname on %:subject\n%a\nReceived on: %U" :empty-lines 1 :immediate-finish t)
+                                ("r" "Respond to Email" entry (file org-inbox-file) "* TODO Respond to %:fromname on %:subject :@email:\n%a\nReceived on: %U" :empty-lines 1 :immediate-finish t)
                                 ))
+  (add-hook 'org-capture-mode-hook #'org-align-all-tags)
   )
 
 (defun my/org-setup-agenda ()
