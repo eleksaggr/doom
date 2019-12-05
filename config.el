@@ -56,6 +56,8 @@
 (defvar org-projects-file "~/org/projects.org" "The org file GTD projects are stored in.")
 (defvar org-habits-file "~/org/habits.org" "The org file habits are stored in.")
 
+(defvar ledger-journal-file "~/org/finances.dat" "The journal file for ledger.")
+
 (defun my/org-setup-capture-templates ()
   "Set up custom capture templates."
   (require 'org-mu4e)
@@ -63,6 +65,14 @@
                                 ("t" "Todo" entry (file org-inbox-file) "* TODO %?\n")
                                 ("l" "Todo with Backlink" entry (file org-inbox-file) "* TODO %?\n%a" :empty-lines 1)
                                 ("r" "Respond to Email" entry (file org-inbox-file) "* TODO Respond to %:fromname on \"%:subject\" :@email:\n%a\nReceived on: %U" :empty-lines 1 :immediate-finish t)
+                                ("i" "Income (Ledger)" plain (file ledger-journal-file) "%(org-read-date) * %^{Description}
+    Assets:%^{Asset|Giro|Sodexo}  %^{Amount} EUR
+    Income:%^{Income}"
+                                 :immediate-finish t :empty-lines 1 :prepend nil)
+                                ("e" "Expense (Ledger)" plain (file ledger-journal-file) "%(org-read-date) * %^{Description}
+    Expense:%^{Expense}  %^{Amount} EUR
+    Assets:%^{Asset|Giro|Sodexo}"
+                                 :immediate-finish t :empty-lines 1 :prepend nil)
                                 ))
   (add-hook 'org-capture-mode-hook #'org-align-all-tags)
   )
