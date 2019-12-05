@@ -163,7 +163,7 @@
 
   ; Backup Org files to external HDD.
   (when (my/is-work-host)
-    (run-with-timer nil (* 15 60) 'my/org-backup))
+    (run-with-timer (* 30 60) (* 60 60) 'my/org-backup))
 
   ; Restore the C-c c keybind for org-capture.
   (map! :nvi "C-c c" 'org-capture)
