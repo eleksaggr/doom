@@ -63,17 +63,18 @@
   (require 'org-mu4e)
   (setq org-capture-templates '(
                                 ("t" "Todo" entry (file org-inbox-file) "* TODO %?\n")
-                                ("l" "Todo with Backlink" entry (file org-inbox-file) "* TODO %?\n%a" :empty-lines 1)
-                                ("r" "Respond to Email" entry (file org-inbox-file) "* TODO Respond to %:fromname on \"%:subject\" :@email:\n%a\nReceived on: %U" :empty-lines 1 :immediate-finish t)
-                                ("i" "Income (Ledger)" plain (file ledger-journal-file) "%(org-read-date) * %^{Description}
+                                ("e" "Respond to Email" entry (file org-inbox-file) "* TODO Respond to %:fromname on \"%:subject\" :@email:\n%a\nReceived on: %U" :empty-lines 1 :immediate-finish t)
+                                ("l" "Ledger")
+                                ("li" "Income" plain (file ledger-journal-file) "%(org-read-date) * %^{Description}
     Assets:%^{Asset|Giro|Sodexo}  %^{Amount} EUR
     Income:%^{Income}"
                                  :immediate-finish t :empty-lines 1 :prepend nil)
-                                ("e" "Expense (Ledger)" plain (file ledger-journal-file) "%(org-read-date) * %^{Description}
+                                ("le" "Expense" plain (file ledger-journal-file) "%(org-read-date) * %^{Description}
     Expense:%^{Expense}  %^{Amount} EUR
     Assets:%^{Asset|Giro|Sodexo}"
                                  :immediate-finish t :empty-lines 1 :prepend nil)
-                                ))
+                                )
+        )
   (add-hook 'org-capture-mode-hook #'org-align-all-tags)
   )
 
