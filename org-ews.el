@@ -26,6 +26,16 @@
   :type (list 'symbol)
   :group 'org-ews)
 
+(defcustom org-ews-file nil
+  "The file the calendar entries are stored in."
+  :type 'string
+  :group 'org-ews)
+
+(defcustom org-ews--buffer-name "*EWS Sync*"
+  "The name for the buffer that is used as output for `org-ews-sync', when `org-ews-file' is nil."
+  :type 'string
+  :group 'org-ews)
+
 (defcustom org-ews-insecure-connection nil
   "Whether the request to the Exchange server should be secured."
   :type 'boolean
@@ -46,7 +56,7 @@
   :type 'integer
   :group 'org-ews)
 
-(defcustom org-ews-sync-interval nil
+(defcustom org-ews-sync-interval 300
   "The amount of seconds until `org-ews-sync' is called. \
 If this is nil `org-ews-sync' is never called automatically."
   :type 'integer
@@ -125,7 +135,7 @@ Do not modify this directly, use `org-ews-toggle-active-timestamps' instead."
 (defun org-ews-start ()
   "Call `org-ews-sync' and start a timer that calls `org-ews-sync' every interval specified by `org-ews-sync-interval'."
   (interactive)
-  (let ((timer (run-at-time nil org-ews-sync-interval org-ews-sync)))
+  (let ((timer (run-at-time nil org-ews-sync-interval 'org-ews-sync)))
     (setq org-ews--timer timer)))
 
 (defun org-ews-stop ()
@@ -157,7 +167,7 @@ Do not modify this directly, use `org-ews-toggle-active-timestamps' instead."
     (with-temp-buffer
       (progn
         (insert (org-ews--format-request))
-        (write-region nil nil temp-file)
+        (write-region nil nil temp-file nil 1)
         temp-file))))                   ;
 
 (defun org-ews--build-curl-command-string (request-file)
@@ -231,10 +241,7 @@ Do not modify this directly, use `org-ews-toggle-active-timestamps' instead."
   :type 'string
   :group 'org-ews)
 
-(defcustom org-ews-fields '((:subject . t)
-                            (:start-time . t)
-                            (:end-time . t)
-                            (:location . t)
+(defcustom org-ews-fields '((:location . t)
                             (:response . t)
                             (:status . t)
                             (:has-attachment . nil)
@@ -247,28 +254,46 @@ Each elements has the form (FIELD . INCLUDE), where FIELD is one of the possible
 and INCLUDE is a boolean flag indicating whether to include the field when creating the
 entry.")
 
+(defcustom org-ews--entry-template "* %s
+%s--%s
+:PROPERTIES:
+%s
+:END:"
+  "A template for a calendar entry in org-mode format."
+  :type 'string
+  :group 'org-ews)
+
+(defcustom org-ews-untitled-event-placeholder "Untitled Event"
+  "The subject of an entry whose name is the empty string."
+  :type 'string
+  :group 'org-ews)
+
 (defun org-ews--format-time (time)
   ; TODO: Actually handle timezones here.
   (concat org-ews--timestamp-begin-symbol (replace-regexp-in-string "Z" "" (replace-regexp-in-string "T" " " time)) org-ews--timestamp-end-symbol))
 
 (defun org-ews--format-entry (entry)
-  (let ((subject (nth 0 entry))
+  "Format ENTRY."
+  (let ((subject (if (string= (nth 0 entry) "") "Untitled Event" (nth 0 entry)))
         (start (org-ews--format-time (nth 1 entry)))
-        (end (org-ews--format-time (nth 2 entry)))
-        (location (nth 3 entry))
-        (has-attachment (if (nth 7 entry) (concat ":" org-ews-attachment-tag ":") ""))
-        (item-type (nth 6 entry))
-        (organizer (nth 8 entry)))
-    (format "* %s %s
-%s--%s
-:PROPERTIES:
-:LOCATION: %s
-:TYPE: %s
-:ORGANIZER: %s
-:END:
-" subject has-attachment start end location item-type organizer)))
+        (end  (org-ews--format-time (nth 2 entry))))
+    (let* ((format-property (lambda (key prop-name value) (if (and (cdr (assoc key org-ews-fields)) (not (string= value "")))
+                                                              (format ":%s: %s\n" prop-name value)
+                                                            "")))
+           (properties-string (replace-regexp-in-string "\n$" "" (concat (funcall format-property :location "LOCATION" (nth 3 entry))
+                                      (funcall format-property :response "RESPONSE" (nth 4 entry))
+                                      (funcall format-property :status "STATUS" (nth 5 entry))
+                                      (funcall format-property :event-type "TYPE" (nth 6 entry))))))
+      (format org-ews--entry-template subject start end properties-string))))
 
 (defun org-ews-sync ()
-  ""
+  "Fetch the upstream calendar events and save them.
+If `org-ews-file' is nil, the formatted events are stored in the buffer with the name `org-ews--buffer-name'.
+Otherwise they are written to `org-ews-file'."
   (interactive)
-  (ignore))
+  (let ((content (string-join (mapcar 'org-ews--format-entry (mapcar 'org-ews--parse-calendar-item (org-ews--parse-response (org-ews--execute-curl-request)))) "\n\n")))
+        (if org-ews-file
+            (with-temp-buffer
+              (insert content)
+              (write-region (point-min) (point-max) org-ews-file nil))
+            (with-current-buffer (get-buffer-create org-ews--buffer-name) (insert content)))))
