@@ -72,6 +72,7 @@ If this is nil `org-ews-sync' is never called automatically."
   :type 'string
   :group 'org-ews)
 
+
 (defcustom org-ews--request-template "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
                xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"
@@ -94,6 +95,32 @@ If this is nil `org-ews-sync' is never called automatically."
 </soap:Envelope>" "A template for a SOAP request to an Exchange server."
 :type 'string
 :group 'org-ews)
+
+(defcustom org-ews--active-timestamps t
+  "Whether timestamps should be active or inactive.
+Do not modify this directly, use `org-ews-toggle-active-timestamps' instead."
+  :type 'boolean
+  :group 'org-ews)
+
+(defcustom org-ews--timestamp-begin-symbol "<"
+  "The symbol used to designate the begining of a timestamp."
+  :type 'string
+  :group 'org-ews)
+
+(defcustom org-ews--timestamp-end-symbol ">"
+  "The symbol used to designate the end of a timestamp."
+  :type 'string
+  :group 'org-ews)
+
+(defun org-ews-toggle-active-timestamps ()
+  "Toggle between creating active and inactive timestamps."
+  (interactive)
+  (progn
+    (if org-ews--active-timestamps (setq org-ews--timestamp-begin-symbol "["
+                                         org-ews--timestamp-end-symbol "]")
+      (setq org-ews--timestamp-begin-symbol "<"
+            org-ews--timestamp-end-symbol ">"))
+    (setq org-ews--active-timestamps (not org-ews--active-timestamps))))
 
 (defun org-ews-start ()
   "Call `org-ews-sync' and start a timer that calls `org-ews-sync' every interval specified by `org-ews-sync-interval'."
@@ -144,7 +171,7 @@ If this is nil `org-ews-sync' is never called automatically."
                   "-s"
                   "-u" (org-ews--build-credential-string)
                   "-L" (org-ews--build-target-url)
-                  "-H" (concat "Content-Type:text/xml; charset=" org-ews--curl-charset)
+                  "-H" (concat "\"" "Content-Type:text/xml; charset\\=" org-ews--curl-charset "\"")
                   "-d" (concat "@" request-file)
                   auth-param)
                  " "))
@@ -153,6 +180,93 @@ If this is nil `org-ews-sync' is never called automatically."
 (defun org-ews--execute-curl-request ()
   "Execute a cURL request built by `org-ews--build-curl-command-string'."
   (shell-command-to-string (org-ews--build-curl-command-string (org-ews--make-temp-request-file))))
+
+(defun org-ews--parse-response (response)
+  (with-temp-buffer
+    (progn
+      (insert response)
+      (let ((content (libxml-parse-xml-region 1 (point-max)))) (dom-by-tag content 'CalendarItem)))))
+
+(defun org-ews--parse-calendar-item (item-node)
+  (list
+   (org-ews--parse-subject (dom-by-tag item-node 'Subject))
+   (org-ews--parse-start (dom-by-tag item-node 'Start))
+   (org-ews--parse-end (dom-by-tag item-node 'End))
+   (org-ews--parse-location (dom-by-tag item-node 'Location))
+   (org-ews--parse-legacy-free-busy-status (dom-by-tag item-node 'LegacyFreeBusyStatus))
+   (org-ews--parse-my-response-type (dom-by-tag item-node 'MyResponseType))
+   (org-ews--parse-calendar-item-type (dom-by-tag item-node 'CalendarItemType))
+   (org-ews--parse-has-attachments (dom-by-tag item-node 'HasAttachments))
+   (org-ews--parse-organizer (dom-by-tag item-node 'Organizer))))
+
+(defun org-ews--parse-item-id ()
+  (ignore))
+
+(defun org-ews--parse-simple-item (node)
+  (dom-text node))
+
+(defalias 'org-ews--parse-subject 'org-ews--parse-simple-item)
+(defalias 'org-ews--parse-start 'org-ews--parse-simple-item)
+(defalias 'org-ews--parse-end 'org-ews--parse-start)
+(defalias 'org-ews--parse-legacy-free-busy-status 'org-ews--parse-simple-item)
+(defalias 'org-ews--parse-location 'org-ews--parse-simple-item)
+(defalias 'org-ews--parse-calendar-item-type 'org-ews--parse-simple-item)
+(defalias 'org-ews--parse-my-response-type 'org-ews--parse-simple-item)
+
+(defun org-ews--parse-has-attachments (node)
+  (string= (dom-text node) "true"))
+
+(defun org-ews--parse-organizer (node)
+  (list
+   (org-ews--parse-name (dom-by-tag node 'Name))
+   (org-ews--parse-email-address (dom-by-tag node 'EmailAddress))
+   (org-ews--parse-routing-type (dom-by-tag node 'RoutingType))))
+
+(defalias 'org-ews--parse-name 'org-ews--parse-simple-item)
+(defalias 'org-ews--parse-email-address 'org-ews--parse-simple-item)
+(defalias 'org-ews--parse-routing-type 'org-ews--parse-simple-item)
+
+(defcustom org-ews-attachment-tag "ATTACHMENT"
+  "The tag that is placed on the entry when it has an attachment."
+  :type 'string
+  :group 'org-ews)
+
+(defcustom org-ews-fields '((:subject . t)
+                            (:start-time . t)
+                            (:end-time . t)
+                            (:location . t)
+                            (:response . t)
+                            (:status . t)
+                            (:has-attachment . nil)
+                            (:event-type . nil)
+                            (:organizer-name . t)
+                            (:organizer-email . t)
+                            (:organizer-routing-type . nil))
+  "A list of fields to show for a calendar entry.
+Each elements has the form (FIELD . INCLUDE), where FIELD is one of the possible fields
+and INCLUDE is a boolean flag indicating whether to include the field when creating the
+entry.")
+
+(defun org-ews--format-time (time)
+  ; TODO: Actually handle timezones here.
+  (concat org-ews--timestamp-begin-symbol (replace-regexp-in-string "Z" "" (replace-regexp-in-string "T" " " time)) org-ews--timestamp-end-symbol))
+
+(defun org-ews--format-entry (entry)
+  (let ((subject (nth 0 entry))
+        (start (org-ews--format-time (nth 1 entry)))
+        (end (org-ews--format-time (nth 2 entry)))
+        (location (nth 3 entry))
+        (has-attachment (if (nth 7 entry) (concat ":" org-ews-attachment-tag ":") ""))
+        (item-type (nth 6 entry))
+        (organizer (nth 8 entry)))
+    (format "* %s %s
+%s--%s
+:PROPERTIES:
+:LOCATION: %s
+:TYPE: %s
+:ORGANIZER: %s
+:END:
+" subject has-attachment start end location item-type organizer)))
 
 (defun org-ews-sync ()
   ""
