@@ -19,7 +19,9 @@
 
 (when (eq doom-theme 'doom-moonlight)
   (set-face-attribute 'font-lock-comment-face nil
-                      :inherit nil)
+                      :inherit nil))
+
+(after! org
   (set-face-attribute 'org-todo nil
                       :foreground "turquoise"
                       :background nil)
