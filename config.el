@@ -22,9 +22,10 @@
                       :inherit nil))
 
 (after! org
+  (when (eq doom-theme 'doom-moonlight)
   (set-face-attribute 'org-todo nil
                       :foreground "turquoise"
                       :background nil)
   (set-face-attribute 'org-done nil
                       :foreground "#696e84"
-                      :background nil))
+                      :background nil)))
