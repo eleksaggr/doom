@@ -12,7 +12,6 @@
         mu4e-use-fancy-chars t)
 
   (set-email-account! "Work"
-                      '(
                       `(
                         ; Address
                         (user-mail-address . "alex.egger@mixed-mode.de")
@@ -28,7 +27,7 @@
                         (mu4e-trash-folder . "/Trash")
                         ; Signature
                         (mu4e-compose-signature . t)
-                        (message-signature-file . "resources/mm.sig")))
+                        (message-signature-file . ,(expand-file-name "resources/mm.sig" doom-private-dir))))
 
   ; Unset most pre-set bookmarks, as I never use them.
   (setq mu4e-bookmarks
