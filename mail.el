@@ -13,6 +13,11 @@
   ; Unset any signature files that may be still active.
   (setq message-signature-file nil)
 
+  ; TODO: Don't set this statically.
+  ; smtpmail uses this internally without telling you,
+  ; so if you set this incorrectly your SMTP server will complain.
+  (setq user-mail-address "alex.egger@mixed-mode.de")
+
   (set-email-account! "Work"
                       '(
                         ; SMTP
