@@ -10,16 +10,12 @@
         mu4e-sent-messages-behavior 'delete
         mu4e-update-interval 180
         mu4e-use-fancy-chars t)
-  ; Unset any signature files that may be still active.
-  (setq message-signature-file nil)
-
-  ; TODO: Don't set this statically.
-  ; smtpmail uses this internally without telling you,
-  ; so if you set this incorrectly your SMTP server will complain.
-  (setq user-mail-address "alex.egger@mixed-mode.de")
 
   (set-email-account! "Work"
                       '(
+                      `(
+                        ; Address
+                        (user-mail-address . "alex.egger@mixed-mode.de")
                         ; SMTP
                         (smtpmail-smtp-server . "localhost")
                         (smtpmail-smtp-service . 1025)
