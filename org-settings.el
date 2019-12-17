@@ -29,7 +29,7 @@
                                 ("r"
                                  "Respond to Email"
                                  entry (file org-inbox-file)
-                                 "* TODO Respond to %:fromname on\"%:subject\" :@email:
+                                 "* TODO Respond to %:fromname on \"%:subject\" :@email:
 %a
 Received on: %U" :empty-lines 1 :immediate-finish t)))
 
