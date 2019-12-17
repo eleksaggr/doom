@@ -36,7 +36,6 @@ Received on: %U" :empty-lines 1 :immediate-finish t)))
   ; Agenda
   (setq org-agenda-compact-blocks nil
         org-agenda-dim-blocked-tasks nil
-        org-agenda-show-all-today t
         org-agenda-span 7
         org-agenda-start-day nil
         org-agenda-window-setup 'other-window)
