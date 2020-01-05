@@ -17,15 +17,7 @@
       doom-themes-enable-italic nil
       doom-modeline-mu4e t)
 
+
 (when (eq doom-theme 'doom-moonlight)
   (set-face-attribute 'font-lock-comment-face nil
                       :inherit nil))
-
-(after! org
-  (when (eq doom-theme 'doom-moonlight)
-  (set-face-attribute 'org-todo nil
-                      :foreground "turquoise"
-                      :background nil)
-  (set-face-attribute 'org-done nil
-                      :foreground "#696e84"
-                      :background nil)))
