@@ -21,3 +21,9 @@
 (when (eq doom-theme 'doom-moonlight)
   (set-face-attribute 'font-lock-comment-face nil
                       :inherit nil))
+
+;; Spotify
+(add-to-list 'load-path "~/.local/share/spotify.el")
+(require 'spotify)
+(load "spotify-secrets.el")
+(define-key spotify-mode-map (kbd "C-c s") 'spotify-command-map)
