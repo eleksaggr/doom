@@ -80,6 +80,7 @@ Received on: %U" :empty-lines 1 :immediate-finish t)))
 (after! org
   (require 'org-mu4e)
 
+  (defvar org-archive-dir (concat org-directory (file-name-as-directory "archive")))
   (defvar org-inbox-file (expand-file-name "inbox.org" org-directory))
   (defvar org-someday-file (expand-file-name "someday.org" org-directory))
   (defvar org-project-file (expand-file-name "projects.org" org-directory))
@@ -92,6 +93,9 @@ Received on: %U" :empty-lines 1 :immediate-finish t)))
   (setq org-refile-targets '((org-inbox-file :level . 1)
                              (org-project-file :maxlevel . 3)
                              (org-someday-file :level . 1)))
+
+  ; Store archives in an archive subfolder
+  (setq org-archive-location (format "%s%%s_archive::" org-archive-dir))
 
   (my/org-setup-tags)
   (my/org-setup-capture-templates)
