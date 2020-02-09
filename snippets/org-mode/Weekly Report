@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name: Weekly Report
+# key: weekly
+# --
+* Projekte
++ $1
+* Projektstatus und besondere Tätigkeiten
+| Wochentag  | Tätigkeiten |
+| Montag     |             |
+| Dienstag   |             |
+| Mittwoch   |             |
+| Donnerstag |             |
+| Freitag    |             |
+* Tools
+$2
+* Sprachen, Libraries, Frameworks
+$0
+* Sonstiges
+* Highlights
+* Lowlights
