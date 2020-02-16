@@ -1,10 +1,8 @@
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
 
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 (add-to-list 'load-path doom-private-dir)
 
 (load "clang.el")
-(load "mail.el")
 (load "org-settings.el")
 (load "utility.el")
 

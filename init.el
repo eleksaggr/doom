@@ -166,7 +166,7 @@
        ;;web               ; the tubes
 
        :email
-       mu4e
+       ;;mu4e
        ;;notmuch
        ;;(wanderlust +gmail)
 
