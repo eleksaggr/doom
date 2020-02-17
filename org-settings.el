@@ -25,13 +25,7 @@
 
 (defun my/org-setup-capture-templates ()
   "Setup capture templates."
-  (setq org-capture-templates '(("t" "Todo" entry (file org-inbox-file) "* TODO %?\n")
-                                ("r"
-                                 "Respond to Email"
-                                 entry (file org-inbox-file)
-                                 "* TODO Respond to %:fromname on \"%:subject\" :@email:
-%a
-Received on: %U" :empty-lines 1 :immediate-finish t)))
+  (setq org-capture-templates '(("t" "Todo" entry (file org-inbox-file) "* TODO %?\n")))
   )
 
 (defun my/org-setup-agenda ()
@@ -78,8 +72,6 @@ Received on: %U" :empty-lines 1 :immediate-finish t)))
   )
 
 (after! org
-  (require 'org-mu4e)
-
   (defvar org-archive-dir (concat org-directory (file-name-as-directory "archive")))
   (defvar org-inbox-file (expand-file-name "inbox.org" org-directory))
   (defvar org-someday-file (expand-file-name "someday.org" org-directory))
