@@ -8,6 +8,8 @@
 
 (setq user-full-name "Alex Egger")
 
+(setq system-time-locale "C")
+
 ;;; UI
 (setq doom-font (font-spec :family "Iosevka" :size 14)
       doom-theme 'doom-oceanic-next

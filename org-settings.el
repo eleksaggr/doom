@@ -25,8 +25,8 @@
 
 (defun my/org-setup-capture-templates ()
   "Setup capture templates."
-  (setq org-capture-templates '(("t" "Todo" entry (file org-inbox-file) "* TODO %?\n")))
-  )
+  (setq org-capture-templates '(("t" "Todo" entry (file org-inbox-file) "* TODO %?\n")
+                                ("n" "Note" plain (file+olp+datetree org-default-notes-file) "%U %?" :empty-lines 1))))
 
 (defun my/org-setup-agenda ()
   "Setup agenda."
