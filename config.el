@@ -13,10 +13,8 @@
 ;;; UI
 (setq doom-font (font-spec :family "Iosevka" :size 14)
       doom-theme 'doom-oceanic-next
-      ; Italics looks horrible in code.
-      doom-themes-enable-italic nil
-      doom-modeline-mu4e t)
-
+                                        ; Italics looks horrible in code.
+      doom-themes-enable-italic nil)
 
 (when (eq doom-theme 'doom-oceanic-next)
   (set-face-attribute 'font-lock-comment-face nil
