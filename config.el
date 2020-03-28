@@ -20,6 +20,9 @@
   (set-face-attribute 'font-lock-comment-face nil
                       :inherit nil))
 
+;; Magit
+(map! :nvi "C-z" #'magit-dispatch)
+
 ;; Spotify
 (add-to-list 'load-path "~/.local/share/spotify.el")
 (require 'spotify)
