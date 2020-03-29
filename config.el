@@ -4,6 +4,7 @@
 
 (load "clang.el")
 (load "org-settings.el")
+(load "secrets.el")
 (load "utility.el")
 
 (setq user-full-name "Alex Egger")
@@ -22,9 +23,3 @@
 
 ;; Magit
 (map! :nvi "C-z" #'magit-dispatch)
-
-;; Spotify
-(add-to-list 'load-path "~/.local/share/spotify.el")
-(require 'spotify)
-(load "spotify-secrets.el")
-(define-key spotify-mode-map (kbd "C-c s") 'spotify-command-map)

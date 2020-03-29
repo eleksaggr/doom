@@ -7,3 +7,4 @@
 ;; (package! builtin-package :disable t)
 
 (package! dts-mode)
+(package! spotify :recipe (:host github :repo "danielfm/spotify.el"))
