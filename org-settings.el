@@ -82,9 +82,9 @@
   (my/org-declare-faces)
   (my/org-setup-todo-keywords)
 
-  (setq org-refile-targets '((org-inbox-file :level . 1)
-                             (org-project-file :maxlevel . 3)
-                             (org-someday-file :level . 1)))
+  (setq org-refile-targets `((,org-inbox-file :level . 1)
+                             (,org-project-file :maxlevel . 3)
+                             (,org-someday-file :level . 1)))
 
   ; Store archives in an archive subfolder
   (setq org-archive-location (format "%s%%s_archive::" org-archive-dir))

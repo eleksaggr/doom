@@ -1,0 +1,13 @@
+# key: om-tc
+# name: OM Test
+# --
+** $1
+:PROPERTIES:
+:IDENTIFIER: $2
+:TYPE: ${0:$$(yas-choose-value '("SO" "ET" "EM"))}
+:END:
+*** TBD Channel
+*** TBD Defaults
+*** TBD Range
+*** TBD Run with default params
+*** TBD Run with changed params
