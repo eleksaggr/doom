@@ -5,15 +5,13 @@
   (add-to-list 'org-modules 'org-checklist t)
   (add-to-list 'org-modules 'org-habit t))
 
-(defun my/org-declare-faces ()
-  "Declare faces for `org-mode' todo keywords."
-  (custom-declare-face '+org-todo-abort '((t (:inherit (bold error org-todo)))) "")
-  (custom-declare-face '+org-todo-next '((t (:inherit (bold org-todo) :box 1))) "")
-  (custom-declare-face '+org-todo-wait '((t (:inherit (bold warning org-todo)))) ""))
-
 (defun my/org-setup-todo-keywords ()
   "Setup todo keywords."
-  (setq org-todo-keywords '("TODO(t)" "NEXT(n)" "WAIT(w@)" "|" "DONE(d)" "ABRT(a@)")
+  (custom-declare-face '+org-todo-abort '((t (:inherit (bold error org-todo)))) "")
+  (custom-declare-face '+org-todo-next '((t (:inherit (bold org-todo) :box 1))) "")
+  (custom-declare-face '+org-todo-wait '((t (:inherit (bold warning org-todo)))) "")
+
+  (setq org-todo-keywords '("TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "ABRT(a)")
         org-todo-keyword-faces '(("ABRT" . +org-todo-abort)
                                  ("NEXT" . +org-todo-next)
                                  ("WAIT" . +org-todo-wait))))
@@ -25,8 +23,23 @@
 
 (defun my/org-setup-capture-templates ()
   "Setup capture templates."
-  (setq org-capture-templates '(("t" "Todo" entry (file org-inbox-file) "* TODO %?\n")
-                                ("n" "Note" plain (file+olp+datetree org-default-notes-file) "%U %?" :empty-lines 1))))
+  (setq org-capture-templates '(("t" "Todo")
+                                ("tt"
+                                 "Todo"
+                                 entry (file org-inbox-file)
+                                 "* TODO %?"
+                                 :empty-lines-after 1)
+                                ("tc"
+                                 "Todo (Code)"
+                                 entry (file org-inbox-file)
+                                 "* TODO %?\nFrom: %a"
+                                 :empty-lines-after 1)
+                                ("n"
+                                 "Note"
+                                 plain
+                                 (file+olp+datetree org-default-notes-file)
+                                 "%U %?"
+                                 :empty-lines 1))))
 
 (defun my/org-setup-agenda ()
   "Setup agenda."
@@ -72,21 +85,20 @@
   )
 
 (after! org
-  (defvar org-archive-dir (concat org-directory (file-name-as-directory "archive")))
+  (defvar org-archive-dir (expand-file-name (file-name-as-directory "archive") org-directory))
   (defvar org-inbox-file (expand-file-name "inbox.org" org-directory))
   (defvar org-someday-file (expand-file-name "someday.org" org-directory))
   (defvar org-project-file (expand-file-name "projects.org" org-directory))
 
   (my/org-add-modules)
 
-  (my/org-declare-faces)
   (my/org-setup-todo-keywords)
 
   (setq org-refile-targets `((,org-inbox-file :level . 1)
                              (,org-project-file :maxlevel . 3)
                              (,org-someday-file :level . 1)))
 
-  ; Store archives in an archive subfolder
+                                        ; Store archives in an archive subfolder
   (setq org-archive-location (format "%s%%s_archive::" org-archive-dir))
 
   (my/org-setup-tags)
@@ -95,12 +107,15 @@
 
                                         ; FIX: Align tags when entering `org-capture-mode'.
   (add-hook 'org-capture-mode-hook #'org-align-all-tags)
+                                        ; FIX: Align tags when entering `org-mode'.
+  (add-hook 'org-mode-hook #'org-align-all-tags)
                                         ; FIX: Switch into evil insert mode when adding a note to a task.
   (add-hook 'org-log-buffer-setup-hook #'evil-insert-state)
 
                                         ; Keybindings
   (map! :nvi "C-c a" #'org-agenda)
   (map! :nvi "C-c c" #'org-capture)
+  (map! :nvi "C-c C-/" #'org-sparse-tree)
 
   (add-hook 'org-mode-hook (lambda ()
                              (when (eq doom-theme 'doom-moonlight)

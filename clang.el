@@ -1,7 +1,5 @@
 ;;; ~/.doom.d/clang.el -*- lexical-binding: t; -*-
 
-(setq lsp-enable-file-watchers nil)
-
 ; Linux Kernel Coding Style
 (c-add-style "kernel" `("linux"
                         (c-basic-offset . 8)

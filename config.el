@@ -8,23 +8,26 @@
 (load "utility.el")
 
 (setq user-full-name "Alex Egger")
+(setq user-mail-address "alex.egger96@gmail.com")
 
 (setq system-time-locale "C")
 
 ;;; UI
-(setq doom-font (font-spec :family "Iosevka" :size 14)
-      doom-theme 'doom-gruvbox
-                                        ; Italics looks horrible in code.
-      doom-themes-enable-italic nil)
-
-(when (eq doom-theme 'doom-oceanic-next)
-  (set-face-attribute 'font-lock-comment-face nil
-                      :inherit nil))
-;;; Dired
-(setq dgi-auto-hide-details-p nil)
-(add-hook 'dired-after-readin-hook #'dired-git-info-auto-enable)
+(setq doom-font (font-spec :family "Iosevka" :size 16)
+      doom-variable-pitch-font (font-spec :family "Open Sans" :size 16)
+      display-line-numbers-type nil
+      doom-theme 'doom-moonlight
+      doom-themes-enable-italic nil ; Italics looks horrible in code.
+      doom-themes-treemacs-theme "doom-colors")
+(doom-themes-treemacs-config)
 
 ;;; Keybindings
-(map! :nvi "C-z" #'magit-dispatch)
+(map! "C-c z" #'magit-dispatch)
 (map! :nvi "C-c /" #'counsel-projectile-rg)
-(map! :nvi "C-c d" #'projectile-dired-other-window)
+(map! "C-c d" #'projectile-dired-other-window)
+
+(use-package lsp-haskell
+  :ensure t
+  :config
+  (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper")
+  )
